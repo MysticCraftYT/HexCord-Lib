@@ -12,7 +12,8 @@
 ]]--
 print('HexCordLib | Init main module');
 local HCL = {}:
-local Discordia = require('discordia');
+Discordia = require('discordia');
+Timer = require('timer');
 HCL.Version = '0.0.4-prerelease';
 HCL.ourClient = nil;
 HCL.ourUser = nil;
@@ -94,12 +95,12 @@ function HCL:memberHasPermission(member,perm)
 		end;
 	end;
 	if (exists == false) then
-		print('While checking perms on member '..member.username..'#'..member.discriminator..', the bot tried to look for an invalid permission called '..tostring(perm)..'\nTraceback: '..debug.traceback());
+		print('HexCordLib | While checking perms on member '..member.user.username..'#'..member.user.discriminator..', the bot tried to look for an invalid permission called '..tostring(perm)..'\nTraceback: '..debug.traceback());
 		return false;
 	end;
 	if (member.id == member.guild.owner.id) then return true; end;
-	for i,role in member.roles do
-		if ((role.permissions:has(Discordia.enums.permissions.administrator)) or (role.permissions:has(perm))) then
+	for i,role in pairs(member.roles) do
+		if ((role:getPermissions():has(Discordia.enums.permissions.administrator)) or (role:getPermissions():has(perm))) then
 			return true;
 		end;
 	end;
