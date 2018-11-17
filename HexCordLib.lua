@@ -13,7 +13,7 @@
 print('HexCordLib | Init main module');
 local HCL = {}:
 local Discordia = require('discordia');
-HCL.Version = '0.0.2-prerelease';
+HCL.Version = '0.0.4-prerelease';
 HCL.ourClient = nil;
 HCL.ourUser = nil;
 HCL.ourClientOptions = nil; -- Optional I guess
@@ -77,6 +77,7 @@ function HCL:ask8Ball(arg)
 	end;
 end;
 
+--joke
 function HCL:QUICKMAFFS()
 	return (2+2)-3; -- quickie
 end;
