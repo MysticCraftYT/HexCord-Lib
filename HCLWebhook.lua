@@ -2,7 +2,7 @@
 	
 	This is based off a Node.js module that does the same thing but it simply only sends messages to 1 hook
 	This was originally its own thing
-	Expect tons of errors attemptig to use this
+	Expect tons of errors attempting to use this
 	
 	Current tasks:
 	- Make a robust webhook storage system.
@@ -81,12 +81,15 @@ function HCL.Webhooks:removeWebhook(whName)
 end;
 
 function HCL.Webhooks:sendMessage(whName,msg,texttospeech)
+	if type(whName) ~= 'string' or type(msg) ~= 'string' then return nil; end;
+	if type(texttospeech) ~= 'boolean' then texttospeech = false; end;
 	whName = whName:lower();
-	if ((type(whName) ~= 'string') or (type(msg) ~= 'string')) then return nil; end;
-	if (type(texttospeech) ~= 'boolean') then texttospeech = false; end;
 	
 	local isValid,targetHook = HCL.Webhooks:isValid(whName);
 	if isValid then
+		if #msg > 2000 then -- if true, perform a scuffed truncation
+			msg = msg:sub(1,2000); -- idk dude
+		end;
 		local Params = {content = msg,tts = texttospeech};
 		local postBody = json.stringify(Params);
 		
@@ -117,25 +120,28 @@ function HCL.Webhooks:sendMessage(whName,msg,texttospeech)
 	end;
 end;
 
-function HCL.Webhooks:fireWebhook(whName,contenttype,content)
+function HCL.Webhooks:fireWebhook(whName,contentType,Params)
+	if type(whName) ~= 'string' or type(contentType) ~= 'string' or type(Params) ~= 'table' then return nil; end;
 	whName = whName:lower();
-	if ((type(whName) ~= 'string') or (type(contenttype) ~= 'string') or (type(content) ~= 'table')) then return end;
-	contenttype = contenttype:lower();
-	local cType = 'j'; local desired = HCL.Webhooks.jsonContentData;
-	if (contenttype == 'json') or (contenttype == 'j') then
-		cType = 'j'; desired = HCL.Webhooks.jsonContentData;
-	elseif (contenttype == 'querystring') or (contenttype == 'q') then
-		cType = 'q'; desired = HCL.Webhooks.querystringContentData;
+	contentType = contentType:lower();
+	local desired = HCL.Webhooks.jsonContentData;
+	if (contentType == 'json') or (contentType == 'j') then
+		contentType = 'j';
+	elseif (contentType == 'querystring') or (contentType == 'q') then
+		contentType = 'q';
 	end;
-	
+	if Params.content ~= nil then
+		if #Params.content > 2000 then -- if true, perform a scuffed truncation
+			Params.content = Params.content:sub(1,2000); -- idk dude
+		end;
+	end;
 	local isValid,targetHook = HCL.Webhooks:isValid(whName);
 	if isValid then
-		local Params = content;
 		local postBody = nil;
-		if (cType == 'j') then
-			postBody = json.stringify(Params);
+		if (contentType == 'j') then
+			postBody = json.stringify(Params); desired = HCL.Webhooks.jsonContentData;
 		else
-			postBody = querystring.stringify(Params);
+			postBody = querystring.stringify(Params); desired = HCL.Webhooks.querystringContentData;
 		end;
 		
 		local Options = {
