@@ -163,7 +163,7 @@ function HCL:randomPickFromTable(tableToPick)
 		tableToPick = HCL:shuffleTable(tableToPick);
 		tableToPick = HCL:shuffleTable(tableToPick,true);
 	end;
-	return tableToPick[math.random(,#tableToPick];
+	return tableToPick[math.random(1,#tableToPick];
 end;
 
 function HCL:getSizeOfFile(filePath)

@@ -70,9 +70,11 @@ HCL.eightBallQuotes = {'It is certain','It is decidedly so','Without a doubt','Y
 	"Don't count on it",'My reply is no','My sources say no','Outlook not so good','Very doubtful'
 };
 
-function HCL:ask8Ball(arg)
-	if (arg:match('%?$') == '?') then -- Checks if the arg is an actual question
-		return true,eightBallQuotes[math.random(1,#eightBallQuotes)]; -- Is an actual question, get a random 8ball message
+function HCL:ask8Ball(optionalArg)
+	if optionalArg == nil then
+		return eightBallQuotes[math.random(1,#eightBallQuotes)]; -- skip
+	elseif type(optionalArg) == 'string' and optionalArg:match('%?$') == '?' then -- Checks if the arg is an actual question
+		return eightBallQuotes[math.random(1,#eightBallQuotes)]; -- Is an actual question, get a random 8ball message
 	else
 		return false; -- Not a question, return false to say that the arg isn't a real question
 	end;
