@@ -14,7 +14,7 @@ print('HexCordLib | Init main module');
 local HCL = {}:
 Discordia = require('discordia');
 Timer = require('timer');
-HCL.Version = '0.0.4-prerelease';
+HCL.Version = '0.0.5-prerelease';
 HCL.ourClient = nil;
 HCL.ourUser = nil;
 HCL.ourClientOptions = nil; -- Optional I guess
