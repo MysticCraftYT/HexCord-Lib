@@ -87,7 +87,7 @@ end;
 
 --joke
 function HCL:QUICKMAFFS()
-	return (2+2)-3; -- quickie
+	return (2+2)-1; -- quickie
 end;
 
 function HCL:memberHasPermission(member,perm)
