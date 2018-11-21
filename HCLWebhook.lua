@@ -34,11 +34,9 @@ local json = require('json');
 local querystring = require('querystring');
 HCL.Webhooks = {
 	Hooks = {};
-	baseSite = "www.discordapp.com";
-	webhookPath = "/api/webhooks";
 	jsonContentData = 'application/json';
 	querystringContentData = 'application/x-www-form-urlencoded';
-	defaultPort = 443;
+	useJSONByDefault = false; -- Overrides the default content type to use on fireWebhook
 };
 HCL.Webhooks.Hooks = {};
 print('HexCordLib Webhooks | Setting up');
@@ -80,91 +78,109 @@ function HCL.Webhooks:removeWebhook(whName)
 	end;
 end;
 
+HCL.webhooksFired = 0;
+
 function HCL.Webhooks:sendMessage(whName,msg,texttospeech)
 	if type(whName) ~= 'string' or type(msg) ~= 'string' then return nil; end;
 	if type(texttospeech) ~= 'boolean' then texttospeech = false; end;
 	whName = whName:lower();
-	
+	-- At this point the args should be right
+	HCL.webhooksFired = HCL.webhooksFired+1;
+	local ourHookNum = HCL.webhooksFired;
+	print('HexCordLib Webhooks | Hook_'..ourHookNum..': attempting to fire '..whName);
 	local isValid,targetHook = HCL.Webhooks:isValid(whName);
 	if isValid then
 		if #msg > 2000 then -- if true, perform a scuffed truncation
 			msg = msg:sub(1,2000); -- idk dude
+			print('HexCordLib Webhooks | Hook_'..ourHookNum..': The Params.content for '..whName..' exceeded 2000 characters, truncated');
 		end;
 		local Params = {content = msg,tts = texttospeech};
 		local postBody = json.stringify(Params);
-		
 		local Options = {
-			hostname = HCL.Webhooks.baseSite,
-			port = HCL.Webhooks.defaultPort,
-			path = tostring(HCL.Webhooks.webhookPath..'/'..targetHook[2]..'/'..targetHook[3]),
+			hostname = 'www.discordapp.com',
+			port = 443,
+			path = tostring('/api/webhooks/'..targetHook[2]..'/'..targetHook[3]),
 			method = 'POST',
 			headers = {
 				['Content-Type'] = HCL.Webhooks.jsonContentData,
 				['Content-Length'] = postBody:len()
 			}
 		};
-		
 		local s,m = pcall(function()
-			local clientRequest = http.request(Options,function(response)
-				print(type(response));
-				print(response);
+			local clientRequest = http.request(Options,function(Response)
+				print('HexCordLib Webhooks | Hook_'..ourHookNum..': Request info info:\nStatus: '..Response.statusCode..' ('..Response.statusMessage..')\nHeaders: '..json.stringify(Response.headers));
+				Response.on('data',function(Chunk)
+					print('HexCordLib Webhooks | Hook_'..ourHookNum..': Body:'..Chunk);
+				end);
 			end);
-			clientRequest:done();
+			clientRequest.on('error',function(Error)
+				print(('HexCordLib Webhooks | Hook_'..ourHookNum..': Error with request: '..Error.code..' ('..Error.message..')');
+			end);
+
+			clientRequest.write(postBody);
+			clientRequest.end();
 		end);
-		
 		if not (s) then
-			print('HexCordLib Webhooks | Error occured:\n'..m);
+			print('HexCordLib Webhooks |  Hook_'..ourHookNum..': Error occured:\n'..m);
 		end;
 	else
 		print('HexCordLib Webhooks | The webhook '..whName..' does not exist');
 	end;
 end;
 
-function HCL.Webhooks:fireWebhook(whName,contentType,Params)
-	if type(whName) ~= 'string' or type(contentType) ~= 'string' or type(Params) ~= 'table' then return nil; end;
-	whName = whName:lower();
-	contentType = contentType:lower();
-	local desired = HCL.Webhooks.jsonContentData;
-	if (contentType == 'json') or (contentType == 'j') then
-		contentType = 'j';
-	elseif (contentType == 'querystring') or (contentType == 'q') then
-		contentType = 'q';
+-- fireWebhook(webHookName,useJsonEncoding,Params) OR fireWebhook(webHookName,Params)
+function HCL.Webhooks:fireWebhook(whName,shouldBeJson,Params)
+	if type(whName) ~= 'string' then return nil; end;
+	if type(shouldBeJson) == 'table' then 
+		Params = shouldBeJson;
+		shouldBeJson = HCL.Webhooks.useJSONByDefault;
 	end;
+	whName = whName:lower();
+	-- At this point the args should be right
+	HCL.webhooksFired = HCL.webhooksFired+1;
+	local ourHookNum = HCL.webhooksFired;
+	print('HexCordLib Webhooks | Hook_'..ourHookNum..': attempting to fire '..whName);
+	local desired = HCL.Webhooks.jsonContentData;
 	if Params.content ~= nil then
 		if #Params.content > 2000 then -- if true, perform a scuffed truncation
 			Params.content = Params.content:sub(1,2000); -- idk dude
+			print('HexCordLib Webhooks | Hook_'..ourHookNum..': The Params.content for '..whName..' exceeded 2000 characters, truncated');
 		end;
 	end;
 	local isValid,targetHook = HCL.Webhooks:isValid(whName);
 	if isValid then
 		local postBody = nil;
-		if (contentType == 'j') then
+		if shouldBeJson then
 			postBody = json.stringify(Params); desired = HCL.Webhooks.jsonContentData;
 		else
 			postBody = querystring.stringify(Params); desired = HCL.Webhooks.querystringContentData;
 		end;
-		
 		local Options = {
-			hostname = HCL.Webhooks.baseSite,
-			port = HCL.Webhooks.defaultPort,
-			path = tostring(HCL.Webhooks.webhookPath..'/'..targetHook[2]..'/'..targetHook[3]),
+			hostname = 'www.discordapp.com',
+			port = 443,
+			path = tostring('/api/webhooks/'..targetHook[2]..'/'..targetHook[3]),
 			method = 'POST',
 			headers = {
 				['Content-Type'] = desired,
 				['Content-Length'] = postBody:len()
 			}
 		};
-		
 		local s,m = pcall(function()
-			local clientRequest = http.request(Options,function(response)
-				print(type(response));
-				print(response);
+			local clientRequest = http.request(Options,function(Response)
+				print('HexCordLib Webhooks | Hook_'..ourHookNum..': Request info info:\nStatus: '..Response.statusCode..' ('..Response.statusMessage..')\nHeaders: '..json.stringify(Response.headers));
+				Response.on('data',function(Chunk)
+					print('HexCordLib Webhooks | Hook_'..ourHookNum..': Body:'..Chunk);
+				end);
 			end);
-			clientRequest:done();
+			clientRequest.on('error',function(Error)
+				print(('HexCordLib Webhooks | Hook_'..ourHookNum..': Error with request: '..Error.code..' ('..Error.message..')');
+			end);
+
+			clientRequest.write(postBody);
+			clientRequest.end();
 		end);
-		
 		if not (s) then
-			print('HexCordLib Webhooks | Error occured:\n'..m);
+			print('HexCordLib Webhooks |  Hook_'..ourHookNum..': Error occured:\n'..m);
 		end;
 	else
 		print('HexCordLib Webhooks | The webhook '..whName..' does not exist');

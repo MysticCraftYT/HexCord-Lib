@@ -9,16 +9,21 @@
 	HexCordLib, a Discordia lua helper library
 	
 	Working on this along side KobalLib, a GMod lua helper library
+	This library pretty much contains steps that I usually need to do frequently or helper functions to make life easier.
+	
+	If I ever get the time I'll make a text file that outlines every function that exists
+	Functions are all over the place so I think they may be redundant.
 ]]--
 print('HexCordLib | Init main module');
-local HCL = {}:
+HCL = {}:
 Discordia = require('discordia');
 Timer = require('timer');
-HCL.Version = '0.0.5-prerelease';
+HCL.Version = '0.0.6-prerelease';
 HCL.ourClient = nil;
 HCL.ourUser = nil;
 HCL.ourClientOptions = nil; -- Optional I guess
 
+-- if other modules need functions from another place it below the dependency or at the bottom of this list
 print('HexCordLib | Loading helper modules');
 require('./HCLUtils');
 require('./HCLWebhook');
