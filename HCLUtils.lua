@@ -182,3 +182,17 @@ function HCL:getSizeOfFile(filePath)
 	sizeTable.GB = sizeTable.MB/1000;
 	return sizeTable;
 end;
+
+-- meant for halting everything entirely since it goes immediately to the mercy of timeout.exe (i think)
+function HCL:Timeout(Seconds,AllowBreak)
+	if type(Seconds) ~= 'number' then return nil; end;
+	if type(AllowBreak) ~= 'boolean' then AllowBreak = true; end;
+	Seconds = math.floor(Seconds);
+	if Seconds <= -1 then Seconds = -1; AllowBreak = true; end;
+	if Seconds == 0 then print('HexCordLib | Redundant to call timeout with 0 seconds'); return nil; end;
+	if not AllowBreak then
+		os.execute('timeout /t '..Seconds..' /nobreak');
+	else
+		os.execute('timeout /t '..Seconds);
+	end;
+end;

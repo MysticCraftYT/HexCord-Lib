@@ -16,9 +16,10 @@
 ]]--
 print('HexCordLib | Init main module');
 HCL = {}:
+_G.HCL = HCL;
 Discordia = require('discordia');
 Timer = require('timer');
-HCL.Version = '0.0.6-prerelease';
+HCL.Version = '0.0.7-prerelease';
 HCL.ourClient = nil;
 HCL.ourUser = nil;
 HCL.ourClientOptions = nil; -- Optional I guess
@@ -26,6 +27,7 @@ HCL.ourClientOptions = nil; -- Optional I guess
 -- if other modules need functions from another place it below the dependency or at the bottom of this list
 print('HexCordLib | Loading helper modules');
 require('./HCLUtils');
+require('./HCLWebhookObject');
 require('./HCLWebhook');
 
 -- I plan to replace this table with enums and make the permission functions use the enumerations instead

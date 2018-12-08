@@ -114,7 +114,7 @@ function HCL.Webhooks:sendMessage(whName,msg,texttospeech)
 				end);
 			end);
 			clientRequest.on('error',function(Error)
-				print(('HexCordLib Webhooks | Hook_'..ourHookNum..': Error with request: '..Error.code..' ('..Error.message..')');
+				print('HexCordLib Webhooks | Hook_'..ourHookNum..': Error with request: '..Error.code..' ('..Error.message..')');
 			end);
 
 			clientRequest.write(postBody);
@@ -126,6 +126,7 @@ function HCL.Webhooks:sendMessage(whName,msg,texttospeech)
 	else
 		print('HexCordLib Webhooks | The webhook '..whName..' does not exist');
 	end;
+	return ourHookNum;
 end;
 
 -- fireWebhook(webHookName,useJsonEncoding,Params) OR fireWebhook(webHookName,Params)
@@ -173,7 +174,7 @@ function HCL.Webhooks:fireWebhook(whName,shouldBeJson,Params)
 				end);
 			end);
 			clientRequest.on('error',function(Error)
-				print(('HexCordLib Webhooks | Hook_'..ourHookNum..': Error with request: '..Error.code..' ('..Error.message..')');
+				print('HexCordLib Webhooks | Hook_'..ourHookNum..': Error with request: '..Error.code..' ('..Error.message..')');
 			end);
 
 			clientRequest.write(postBody);
@@ -185,4 +186,5 @@ function HCL.Webhooks:fireWebhook(whName,shouldBeJson,Params)
 	else
 		print('HexCordLib Webhooks | The webhook '..whName..' does not exist');
 	end;
+	return ourHookNum;
 end;
