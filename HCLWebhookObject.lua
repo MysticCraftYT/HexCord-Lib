@@ -2,6 +2,7 @@
 -- Could replace the webhook lib but eh
 -- Right now some code might depend on the webhook library, I aim to make it independent of everything but the json,querystring, and http libraries
 -- Basically the webhook library shrunk down into a class/object
+-- if you wanna change something then just change it on the class itself (like Webhook.allowDebugPrint = true)
 local json = require('json');
 local querystring = require('querystring');
 local http = require('http');
@@ -11,34 +12,29 @@ HCL.Webhook = { -- Values
 	hookID = ''
 	Token = ''
 	timesFired = 0
-	overridesJson = true
+	allowDebugPrint = true
+	useJson = false -- If shouldBeJson isn't specified in fireHook() then it will use this
 };
 HCL.Webhook.__index = Webhook;
 HCL.Webhook._eq = function(leftSide,rightSide)
 	return (leftSide.hookID == rightSide.hookID);
 end;
 
-function HCL.Webhook.new(whName,whHookID,whToken)
+function HCL.Webhook.new(whName,whHookID,whToken,useJson)
 	local self = setmetatable({},self);
 	self.Name = whName;
 	self.hookID = whHookID;
 	self.Token = whToken;
+	if type(useJson) ~= boolean then
+		self.useJson = false;
+	else
+		self.useJson = useJson;
+	end;
 	return self;
 end;
 
-function HCL.Webhook:debugPrint(outputText) -- i need some help over here mk? my object, my rules
-	print('HexCordLib Webhook Objects | '..self.Name..'('..self.timesFired..'): '..outputText);
-end;
-
-function HCL.Webhook:shouldOverrideJson(optionalSet)
-	if type(optionalSet) ~= 'boolean' then return self.overridesJson; end;
-	self.overridesJson = optionalSet;
-end;
-
-function HCL.Webhook:changeHookData(whHookID,whToken,shouldResetFireCount)
-	self.hookID = whHookID;
-	self.Token = whToken;
-	if shouldResetFireCount then self.timesFired = 0; end;
+function HCL.Webhook:debugPrint(outputText) -- my object, my rules
+	if self.allowDebugPrint then print('HexCordLib Webhook Objects | '..self.Name..'('..self.timesFired..'): '..outputText); end;
 end;
 
 function HCL.Webhook:sendMessage(msgText,isTTS)
@@ -81,7 +77,7 @@ end;
 function HCL.Webhook:fireHook(shouldBeJson,Params)
 	if type(shouldBeJson) == 'table' then 
 		Params = shouldBeJson;
-		shouldBeJson = not self.overridesJson;
+		shouldBeJson = self.useJson;
 	end;
 	self.timesFired = self.timesFired+1;
 	if Params.content ~= nil then
