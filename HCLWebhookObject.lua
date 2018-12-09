@@ -11,7 +11,7 @@ local querystring = require('querystring');
 local http = require('http');
 
 HCL.Webhook = { -- Values
-	Name = 'unnamed'
+	Name = 'unnamed_webhook'
 	hookID = ''
 	Token = ''
 	timesFired = 0

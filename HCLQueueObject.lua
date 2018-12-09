@@ -4,8 +4,8 @@
 -- Keep in mind that the Name variable is just for convenience only and isn't expected to be unique
 print('HexCordLib | Queue object loading');
 HCL.Queue = {
-	Name = 'unnamed'
-	Queue = {}
+	Name = 'unnamed_queue' -- *smokes le good blunt*
+	Queue = {} -- queue is just "Q" with 4 silent letters
 };
 HCL.Webhook.__index = Webhook;
 HCL.Webhook._eq = function(leftSide,rightSide)
@@ -79,5 +79,4 @@ function HCL.Queue:Clear()
 	self.Queue = {};
 	return oldQueue;
 end;
-
 
