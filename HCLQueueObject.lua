@@ -30,6 +30,7 @@ function HCL.Queue:Grab(Index)
 	if type(Index) ~= 'number' then Index = 1; end;
 	if Index < 0 then Index = 1; end;
 	if Index > #self.Queue then Index = #self.Queue; end;
+	local valueToGet = self.Queue[Index];
 	return valueToGet;
 end;
 -- Gets the value in the position requested or the first value and removes it from the table
