@@ -3,12 +3,15 @@
 -- Right now some code might depend on the webhook library, I aim to make it independent of everything but the json,querystring, and http libraries
 -- Basically the webhook library shrunk down into a class/object
 -- if you wanna change something then just change it on the class itself (like Webhook.allowDebugPrint = true)
+-- expect errors cause im dumb
+-- Keep in mind that the Name variable is just for convenience only and isn't expected to be unique
+print('HexCordLib | Webhook object loading');
 local json = require('json');
 local querystring = require('querystring');
 local http = require('http');
 
 HCL.Webhook = { -- Values
-	Name = ''
+	Name = 'unnamed'
 	hookID = ''
 	Token = ''
 	timesFired = 0

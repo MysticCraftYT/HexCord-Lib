@@ -84,7 +84,8 @@ function HCL:anamNaturalSort(tbl)
 end;
 
 -- Props to MemoryPenguin
-function HCL:Levenshtein(a, b)
+-- I'm aware that Luvit already has a levenshtein function (string.levenshtein())
+function HCL:Levenshtein(a,b)
 	if a == b then return 0; end;
 	if #a == 0 then return #b; end;
 	if #b == 0 then return #a; end;
@@ -95,35 +96,30 @@ function HCL:Levenshtein(a, b)
 	local last = {};
 	local current = {};
 	-- Initialize the starting state of the last row, starting from 0.
-	for i = 1, #b + 1 do
-		last[i] = i - 1;
+	for i = 1, #b+1 do
+		last[i] = i-1;
 	end;
 	-- For each character in the first string...
-	for charA = 1, #a do
+	for charA = 1,#a do
 		-- Initialize current to the value of i.
 		current[1] = charA;
 		-- For each character in the second string
-		for charB = 1, #b do
+		for charB = 1,#b do
 			-- If the two characters differ, we're performing an operation, be it substitution, deletion, or addition.
-			if string.sub(a, charA, charA) ~= string.sub(b, charB, charB) then
-				current[charB + 1] = math.min(
-					current[charB] + 1, -- Insertion
-					last[charB + 1] + 1, -- Deletion
-					last[charB] + 1 -- Substitution
-				);
-			-- If they're the same, the edit distance hasn't changed and we can use the one from the previous column and row.
-			else
-				current[charB + 1] = last[charB];
-			end
-		end
+			if string.sub(a,charA,charA) ~= string.sub(b,charB,charB) then
+				current[charB+1] = math.min(current[charB]+1,last[charB+1]+1,last[charB]+1); -- Insertion, Deletion, Substitution, respectfully
+			else -- If they're the same, the edit distance hasn't changed and we can use the one from the previous column and row.
+				current[charB+1] = last[charB];
+			end;
+		end;
 		--[[Overwrite the last row with the current row when we're done.
 			We don't swap the tables because that would create a new table, with all its allocation and resizing costs.]]--
-		for i = 1, #b + 1 do
+		for i = 1,#b+1 do
 			last[i] = current[i];
-		end
-	end
+		end;
+	end;
 	-- The final edit distance will be the value in the final column of the final row.
-	return current[#b + 1];
+	return current[#b+1];
 end;
 
 function HCL:shuffleTable(tableToShuffle,shushPlease)
