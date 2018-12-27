@@ -27,8 +27,9 @@ HCL.ourClientOptions = nil; -- Optional I guess
 -- if other modules need functions from another place it below the dependency or at the bottom of this list
 print('HexCordLib | Loading helper modules');
 require('./HCLUtils');
+require('./HCLQueueObject');
 require('./HCLWebhookObject');
-require('./HCLWebhook');
+require('./HCLWebhook'); -- Might be obsolete due to the Webhook object
 
 -- I plan to replace this table with enums and make the permission functions use the enumerations instead
 -- Currently in progress, this may be for reference only
@@ -104,7 +105,7 @@ function HCL:memberHasPermission(member,perm)
 		end;
 	end;
 	if (exists == false) then
-		print('HexCordLib | While checking perms on member '..member.user.username..'#'..member.user.discriminator..', the bot tried to look for an invalid permission called '..tostring(perm)..'\nTraceback: '..debug.traceback());
+		print('HexCordLib | While checking perms on member '..member.user.username..'#'..member.user.discriminator..', we tried to look for an invalid permission called '..tostring(perm)..'\nTraceback: '..debug.traceback());
 		return false;
 	end;
 	if (member.id == member.guild.owner.id) then return true; end;

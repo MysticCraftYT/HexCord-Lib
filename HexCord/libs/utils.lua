@@ -1,14 +1,14 @@
-print('HexCordLib | Utility module loading');
-HCL = _G.HCL; -- necessary
-function HCL:Wait(num)
+local Utils = {};
+print('HEXCORD | Util init');
+function Utils:Wait(num)
 	if (type(num) ~= 'number') then num = 0.03; end;
 	if (num > 0.03) then num = 0.03; end;
-	print(tostring('Waiting for '..num..' seconds. Microseconds: '..num*1000));
+	print(tostring('HEXCORD | Wait called, '..num..' secs ('..num*1000..' microsecs)'));
 	Timer.sleep(num*1000);
 end;
 
 -- Props to SinisterRectus/Discordia
-function HCL:randomString(Length,Min,Max)
+function Utils:randomString(Length,Min,Max)
 	local tableToReturn = {};
 	if type(Min) ~= 'number' then Min = 0; end;
 	if type(Max) ~= 'number' then Max = 255; end;
@@ -18,18 +18,18 @@ function HCL:randomString(Length,Min,Max)
 	return table.concat(tableToReturn);
 end;
 
-function HCL:Clamp(inputNum, Min, Max)
+function Utils:Clamp(inputNum, Min, Max)
 	return math.min(math.max(inputNum, Min), Max);
 end;
 
-function HCL:Round(n, i)
+function Utils:Round(n, i)
 	local m = 10 ^ (i or 0);
 	return math.floor(n * m + 0.5)/m;
 end;
 -- End of SR's props
 
 -- Props to Crazyman32
-function HCL:crazyNaturalSort(tbl)
+function Utils:crazyNaturalSort(tbl)
 	local function Convert(s)
 		local res = ''; local dot = '';
 		for n, m, c in tostring(s):gmatch("(0*(%d*))(.?)") do
@@ -51,7 +51,7 @@ function HCL:crazyNaturalSort(tbl)
 end;
 
 -- Props to Anaminus
-function HCL:anamNaturalSort(tbl)
+function Utils:anamNaturalSort(tbl)
 	table.sort(tbl,function(a,b)
 		-- Split string by first sequence of digits.
 		local function findNum(s)
@@ -86,7 +86,7 @@ end;
 
 -- Props to MemoryPenguin
 -- I'm aware that Luvit already has a levenshtein function (string.levenshtein())
-function HCL:Levenshtein(a,b)
+function Utils:Levenshtein(a,b)
 	if a == b then return 0; end;
 	if #a == 0 then return #b; end;
 	if #b == 0 then return #a; end;
@@ -123,11 +123,11 @@ function HCL:Levenshtein(a,b)
 	return current[#b+1];
 end;
 
-function HCL:shuffleTable(tableToShuffle,shushPlease)
+function Utils:shuffleTable(tableToShuffle,shushPlease)
 	if type(shushPlease) ~= 'boolean' then shushPlease = false; end;
 	local sms,smm = pcall(function() table.sort(tableToShuffle); end);
 	if sms == false and shushPlease == false then
-		print('HexCordLib | Failed to sort table: '..smm..'\nTraceback:\n'..debug.traceback());
+		print('HEXCORD | Table sort failed: '..smm..'\nTraceback:\n'..debug.traceback());
 	end;
 	local tableToReturn = {};
 	while true do
@@ -142,7 +142,7 @@ function HCL:shuffleTable(tableToShuffle,shushPlease)
 	return tableToReturn;
 end;
 
-function HCL:ranAlphanumericStr(Length,omitNumbers)
+function Utils:ranAlphanumericStr(Length,omitNumbers)
 	local tableToReturn = {};
 	local acceptableRanges = {
 		{65,90},{97,122},{48,57} -- uppercase, lowercase, numbers
@@ -155,15 +155,15 @@ function HCL:ranAlphanumericStr(Length,omitNumbers)
 	return table.concat(tableToReturn);
 end;
 
-function HCL:randomPickFromTable(tableToPick)
+function Utils:randomPickFromTable(tableToPick)
 	if #tableToPick > 14 then -- Don't want to shuffle small tables, could get expensive
-		tableToPick = HCL:shuffleTable(tableToPick);
-		tableToPick = HCL:shuffleTable(tableToPick,true);
+		tableToPick = Utils:shuffleTable(tableToPick);
+		tableToPick = Utils:shuffleTable(tableToPick,true);
 	end;
 	return tableToPick[math.random(1,#tableToPick];
 end;
 
-function HCL:getSizeOfFile(filePath)
+function Utils:getSizeOfFile(filePath)
 	local statData = nil;
 	fs.Stat(filePath,function(errors,statObj)
 		if (errors) then
@@ -180,16 +180,9 @@ function HCL:getSizeOfFile(filePath)
 	return sizeTable;
 end;
 
--- meant for halting everything entirely since it goes immediately to the mercy of timeout.exe (i think)
-function HCL:Timeout(Seconds,AllowBreak)
-	if type(Seconds) ~= 'number' then return nil; end;
-	if type(AllowBreak) ~= 'boolean' then AllowBreak = true; end;
-	Seconds = math.floor(Seconds);
-	if Seconds <= -1 then Seconds = -1; AllowBreak = true; end;
-	if Seconds == 0 then print('HexCordLib | Redundant to call timeout with 0 seconds'); return nil; end;
-	if not AllowBreak then
-		os.execute('timeout /t '..Seconds..' /nobreak');
-	else
-		os.execute('timeout /t '..Seconds);
-	end;
+-- replacement for the plain lua (condition and trueVar or falseVar)
+function Utils.Either(Condition,trueVar,falseVar)
+	if (Condition) return trueVar; else return falseVar; end;
 end;
+
+return Utils;

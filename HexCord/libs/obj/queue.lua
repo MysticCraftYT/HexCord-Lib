@@ -2,14 +2,13 @@
 -- I'm aware Discordia apparently has a queue object and a deque (double-ended queue object) but I can't be arsed to use it
 -- Plus this is some good practice with writing objects
 -- Keep in mind that the Name variable is just for convenience only and isn't expected to be unique
-print('HexCordLib | Queue object loading');
-HCL = _G.HCL; -- necessary
-HCL.Queue = {
+print('HEXCORD | Queue object init');
+Queue = {
 	Name = 'unnamed_queue' -- *smokes le good blunt*
 	Queue = {} -- queue is just "Q" with 4 silent letters
 };
-HCL.Queue.__index = Queue;
-HCL.Queue._eq = function(leftSide,rightSide)
+Queue.__index = Queue;
+Queue._eq = function(leftSide,rightSide)
 	if #leftSide.Queue == #rightSide.Queue then
 		for i,v in pairs(leftSide.Queue) do
 			if v ~= rightSide.Queue[i] then return false; end;
@@ -19,14 +18,14 @@ HCL.Queue._eq = function(leftSide,rightSide)
 	return false;
 end;
 
-function HCL.Queue.new(Name,presetTable)
+function Queue.new(Name,presetTable)
 	local self = setmetatable({},self);
 	self.Name = whName;
 	self.Queue = presetTable;
 	return self;
 end;
 -- Gets the value in the position requested or the first value
-function HCL.Queue:Grab(Index)
+function Queue:Grab(Index)
 	if type(Index) == 'string' then Index = tonumber(Index); end;
 	if type(Index) ~= 'number' then Index = 1; end;
 	if Index < 0 then Index = 1; end;
@@ -34,7 +33,7 @@ function HCL.Queue:Grab(Index)
 	return self.Queue[Index];
 end;
 -- Gets the value in the position requested or the first value and removes it from the table
-function HCL.Queue:Pop(Index)
+function Queue:Pop(Index)
 	if type(Index) == 'string' then Index = tonumber(Index); end;
 	if type(Index) ~= 'number' then Index = 1; end;
 	if Index < 0 then Index = 1; end;
@@ -44,7 +43,7 @@ function HCL.Queue:Pop(Index)
 	return valueToGet;
 end;
 -- Essentially skip one or some variables. maxIndexToRemove is optional
-function HCL.Queue:Remove(indexToRemove,maxIndexToRemove)
+function Queue:Remove(indexToRemove,maxIndexToRemove)
 	if type(indexToRemove) == 'string' then indexToRemove = tonumber(indexToRemove); end;
 	if type(indexToRemove) ~= 'number' then indexToRemove = 1; end;
 	if indexToRemove < 0 then indexToRemove = 1 end;
@@ -64,7 +63,7 @@ function HCL.Queue:Remove(indexToRemove,maxIndexToRemove)
 	return removedValues;
 end;
 -- Add a value to the queue, overrideIndex is optional
-function HCL.Queue:Add(Value,overrideIndex)
+function Queue:Add(Value,overrideIndex)
 	if type(overrideIndex) == 'string' then overrideIndex = tonumber(Index); end;
 	if type(overrideIndex) ~= 'number' then overrideIndex = #self.Queue+1; end;
 	if overrideIndex < 0 then overrideIndex = #self.Queue+1; end;
@@ -72,7 +71,7 @@ function HCL.Queue:Add(Value,overrideIndex)
 	table.insert(self.Queue,overrideIndex,Value);
 end;
 -- Clears the queue and returns it just in-case you want it
-function HCL.Queue:Clear()
+function Queue:Clear()
 	local oldQueue = {};
 	for i,v in pairs(self.Queue) do
 		table.insert(oldQueue,i,v); -- Essentially quick copy the queue, works perfectly for arrays
@@ -81,3 +80,4 @@ function HCL.Queue:Clear()
 	return oldQueue;
 end;
 
+return Queue;

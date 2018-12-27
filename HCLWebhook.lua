@@ -29,9 +29,11 @@
 	- any hight, width or proxy_url for images
 ]]--
 print('HexCordLib Webhooks | Library called');
+HCL = _G.HCL; -- necessary
 local http = require('http');
 local json = require('json');
 local querystring = require('querystring');
+
 HCL.Webhooks = {
 	Hooks = {};
 	jsonContentData = 'application/json';

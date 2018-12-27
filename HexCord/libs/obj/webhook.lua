@@ -5,13 +5,12 @@
 -- if you wanna change something then just change it on the class itself (like Webhook.allowDebugPrint = true)
 -- expect errors cause im dumb
 -- Keep in mind that the Name variable is just for convenience only and isn't expected to be unique
-print('HexCordLib | Webhook object loading');
-HCL = _G.HCL; -- necessary
+print('HEXCORD | Webhook object init');
 local json = require('json');
 local querystring = require('querystring');
 local http = require('http');
 
-HCL.Webhook = { -- Values
+Webhook = { -- Values
 	Name = 'unnamed_webhook'
 	hookID = ''
 	Token = ''
@@ -19,12 +18,12 @@ HCL.Webhook = { -- Values
 	allowDebugPrint = true
 	useJson = false -- If shouldBeJson isn't specified in fireHook() then it will use this
 };
-HCL.Webhook.__index = Webhook;
-HCL.Webhook._eq = function(leftSide,rightSide)
+Webhook.__index = Webhook;
+Webhook._eq = function(leftSide,rightSide)
 	return (leftSide.hookID == rightSide.hookID);
 end;
 
-function HCL.Webhook.new(whName,whHookID,whToken,useJson)
+function Webhook.new(whName,whHookID,whToken,useJson)
 	local self = setmetatable({},self);
 	self.Name = whName;
 	self.hookID = whHookID;
@@ -37,11 +36,11 @@ function HCL.Webhook.new(whName,whHookID,whToken,useJson)
 	return self;
 end;
 
-function HCL.Webhook:debugPrint(outputText) -- my object, my rules
-	if self.allowDebugPrint then print('HexCordLib Webhook Objects | '..self.Name..'('..self.timesFired..'): '..outputText); end;
+function Webhook:debugPrint(outputText) -- my object, my rules
+	if self.allowDebugPrint then print('HEXCORD Webhook '..self.Name..'('..self.timesFired..') | '..outputText); end;
 end;
 
-function HCL.Webhook:sendMessage(msgText,isTTS)
+function Webhook:sendMessage(msgText,isTTS)
 	if type(msgText) ~= 'string' and type(isTTS) ~= 'boolean' then return nil; end;
 	self.timesFired = self.timesFired+1;
 	if #msgText > 2000 then -- if true, perform a scuffed truncation
@@ -78,7 +77,7 @@ function HCL.Webhook:sendMessage(msgText,isTTS)
 	end;
 end;
 
-function HCL.Webhook:fireHook(shouldBeJson,Params)
+function Webhook:fireHook(shouldBeJson,Params)
 	if type(shouldBeJson) == 'table' then 
 		Params = shouldBeJson;
 		shouldBeJson = self.useJson;
@@ -123,3 +122,5 @@ function HCL.Webhook:fireHook(shouldBeJson,Params)
 		self.debugPrint('Error occured:\n'..m);
 	end;
 end;
+
+return Webhook;
