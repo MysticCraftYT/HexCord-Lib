@@ -24,17 +24,24 @@ Webhook._eq = function(leftSide,rightSide)
 end;
 
 function Webhook.new(whName,whHookID,whToken,useJson)
-	local self = setmetatable({},self);
+	local self = self or {}; -- In case the function is called as Webhook:new()
+	setmetatable(self,Webhook);
 	self.Name = whName;
 	self.hookID = whHookID;
 	self.Token = whToken;
 	if type(useJson) ~= boolean then
-		self.useJson = false;
+		self.useJson = Webhook.useJson;
 	else
 		self.useJson = useJson;
 	end;
 	return self;
 end;
+
+--[[
+function Webhook.NewFromDiscordia(webhookObject,useJson)
+
+end;
+]]-
 
 function Webhook:debugPrint(outputText) -- my object, my rules
 	if self.allowDebugPrint then print('HEXCORD Webhook '..self.Name..'('..self.timesFired..') | '..outputText); end;
@@ -76,7 +83,7 @@ function Webhook:sendMessage(msgText,isTTS)
 		self.debugPrint('Error occured:\n'..m);
 	end;
 end;
-
+-- fireHook(boolean shouldBeJson, table Params) or fireHook(table Params)
 function Webhook:fireHook(shouldBeJson,Params)
 	if type(shouldBeJson) == 'table' then 
 		Params = shouldBeJson;

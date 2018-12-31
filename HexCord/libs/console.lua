@@ -1,4 +1,4 @@
-local Console = {}; -- quick 
+local Console = {};
 print('HEXCORD | Console init');
 math.randomseed(os.time());
 function Console.Timeout(Secs,allowBreak)
@@ -28,10 +28,19 @@ function Console.Title(Str)
 	Str = tostring(Str);
 	if Str ~= nil then os.execute('title '..Str); end;
 end;
+Console.ChangeWindowTitle = Console.Title;
 
-function Console.ChangeWindowTitle(Str)
-	Str = tostring(Str);
-	if Str ~= nil then os.execute('title '..Str); end;
+-- expects to be running as admin
+function Console.SimpleTaskkill(taskname)
+	if taskname:match('%.exe$') == '.exe' then
+		os.execute('taskkill /F /IM '..taskname);
+	else
+		os.execute('taskkill /F /IM '..taskname..'.exe');
+	end;
+end;
+-- expects to be running as admin
+function Console.TaskkillByPID(taskPID)
+	os.execute('taskkill /F /PID '..taskPID);
 end;
 
 -- I may have overcomplicated this.
