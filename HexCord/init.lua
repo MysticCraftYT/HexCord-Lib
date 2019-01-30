@@ -9,6 +9,13 @@ local HexCord = {
 	Webhook = require('obj/webhook'),
 };
 
--- standalone functions could go here
+-- kingly functions could go here
+
+-- had to
+function HexCord:QUICKMAFFS()
+	return (2+2)-1; -- quickie
+end;
+
+-- end of kingly functions
 
 return HexCord;

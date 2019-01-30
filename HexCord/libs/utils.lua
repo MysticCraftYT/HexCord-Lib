@@ -1,5 +1,6 @@
 local Utils = {};
 print('HEXCORD | Util init');
+math.randomseed(os.time());
 function Utils:Wait(num)
 	if (type(num) ~= 'number') then num = 0.03; end;
 	if (num > 0.03) then num = 0.03; end;
@@ -180,9 +181,33 @@ function Utils:getSizeOfFile(filePath)
 	return sizeTable;
 end;
 
+-- something i thought of
+-- this is stupid
+-- i made this on a calculator and then wrote it in lua
+-- im very bored
+Utils.RandomVars = {a = 0, b = 0, c = 0, d = 0, e = 0, f = 0};
+function Utils.weirdRandom()
+	local Varq = Utils.RandomVars;
+	Varq.a = (math.random(-40,45)+math.floor(Varq.f/4));
+	Varq.b = (Varq.a+Varq.f-math.floor(Varq.a/2));
+	Varq.c = (Varq.b-Varq.a+math.random(-20,20));
+	Varq.d = (Varq.c-math.floor(Varq.c/2)-(Varq.a-Varq.b)+(Varq.e+Varq.d));
+	Varq.e = ((Varq.b+Varq.a)-(Varq.f-Varq.a));
+	Varq.f = (math.random(-45,45)+(Varq.c+Varq.a)-(Varq.e+Varq.d));
+	return Varq.f,Varq;
+end;
+
 -- replacement for the plain lua (condition and trueVar or falseVar)
 function Utils.Either(Condition,trueVar,falseVar)
 	if (Condition) return trueVar; else return falseVar; end;
+end;
+
+function Utils.XOr(fCon,sCon)
+	if fCon == sCon then return false;
+	elseif fCon == true and sCon == false then return true;
+	elseif sCon == true and fCon == false then return true;
+	else return false; -- failsafe cause im lazy
+	end;
 end;
 
 return Utils;

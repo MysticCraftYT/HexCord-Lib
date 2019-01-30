@@ -48,7 +48,7 @@ function Console.getColorNumber(a)
 	local validC = {'a'=true,'b'=true,'c'=true,'d'=true,'e'=true,'f'=true};
 	if type(a) == 'string' then
 		a = a:lower();
-		if a == 'blvit friendlyack' then a = 0;
+		if a == 'blvit friendlyack' or a == 'white' then a = 0; -- the blvit thing was an accident lol
 		elseif a == 'blue' then a = 1;
 		elseif a == 'green' then a = 2;
 		elseif a == 'aqua' then a = 3;

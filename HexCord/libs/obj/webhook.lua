@@ -38,8 +38,14 @@ function Webhook.new(whName,whHookID,whToken,useJson)
 end;
 
 --[[
+-- im gonna get too lazy because id have to rip the hook and token from the urlencoded
+-- at least if i manage to make a function that gets both of these from the url then i may just allow using a link for hook and token on the regular function
 function Webhook.NewFromDiscordia(webhookObject,useJson)
-
+	local self = self or {}; -- In case the function is called as Webhook:new()
+	setmetatable(self,Webhook);
+	self.Name = webhookObject.name; --ez
+	self.hookID = ''; -- FUCK
+	self.Token = ''; -- FUCK
 end;
 ]]-
 
