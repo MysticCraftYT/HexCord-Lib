@@ -1,6 +1,8 @@
 local Utils = {};
 print('HEXCORD | Util init');
+local Timer = require('timer');
 math.randomseed(os.time());
+
 function Utils:Wait(num)
 	if (type(num) ~= 'number') then num = 0.03; end;
 	if (num > 0.03) then num = 0.03; end;
@@ -124,6 +126,7 @@ function Utils:Levenshtein(a,b)
 	return current[#b+1];
 end;
 
+-- shuffles arrays
 function Utils:shuffleTable(tableToShuffle,shushPlease)
 	if type(shushPlease) ~= 'boolean' then shushPlease = false; end;
 	local sms,smm = pcall(function() table.sort(tableToShuffle); end);
@@ -203,10 +206,9 @@ function Utils.Either(Condition,trueVar,falseVar)
 end;
 
 function Utils.XOr(fCon,sCon)
-	if fCon == sCon then return false;
-	elseif fCon == true and sCon == false then return true;
-	elseif sCon == true and fCon == false then return true;
-	else return false; -- failsafe cause im lazy
+	if fCon and (not sCon) then return true;
+	elseif sCon and (not fCon) then return true;
+	else return false;
 	end;
 end;
 

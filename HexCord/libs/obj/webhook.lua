@@ -24,7 +24,7 @@ Webhook._eq = function(leftSide,rightSide)
 end;
 
 function Webhook.new(whName,whHookID,whToken,useJson)
-	local self = self or {}; -- In case the function is called as Webhook:new()
+	local self = {};
 	setmetatable(self,Webhook);
 	self.Name = whName;
 	self.hookID = whHookID;

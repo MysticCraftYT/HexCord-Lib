@@ -19,7 +19,7 @@ Queue._eq = function(leftSide,rightSide)
 end;
 
 function Queue.new(Name,presetTable)
-	local self = self or {}; -- In case the function is called as Webhook:new()
+	local self = {};
 	setmetatable(self,Queue);
 	self.Name = whName;
 	self.Queue = presetTable;

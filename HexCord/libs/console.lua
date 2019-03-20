@@ -1,4 +1,4 @@
-local Console = {};
+local Console = {}; -- windows only cause fucc you
 print('HEXCORD | Console init');
 math.randomseed(os.time());
 function Console.Timeout(Secs,allowBreak)
@@ -93,8 +93,8 @@ end;
 function Console.setColor(Background,Foreground)
 	Background = Console.getColorNumber(Background);
 	Foreground = Console.getColorNumber(Foreground);
-	if Background == Foreground then
-		print('HEXCORD | You may not use the same background and foreground');
+	if Background == Foreground or Background == nil or Foreground == nil then
+		print('HEXCORD | Invalid background/foreground(s)');
 		return false;
 	else
 		os.execute('color '..Background..''..Foreground);
